@@ -1,0 +1,30 @@
+.body{
+    margin: 1%;
+}
+.border{
+    margin: 2%;
+    padding: 2%;
+    border: 1px solid black;
+}
+.gray{
+    color: gray;
+}
+.full{
+    width: 100%;
+    height: 100%;
+}
+.comment{
+    user-select: none;
+}
+.comment:hover{
+    cursor: pointer;
+}
+.post_id{
+    display: none;
+}
+#comment_form textarea{
+    width: 100%;
+}
+.display_none{
+    display: none;
+}

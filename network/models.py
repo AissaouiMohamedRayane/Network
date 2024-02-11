@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -24,8 +25,8 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    username = models.CharField(max_length=20)
-    liked_postes=models.ManyToManyField('Poste',related_name='liking_users', blank=True)
+    username = models.CharField(max_length=20,)
+    liked_postes=models.ManyToManyField('Post',related_name='liking_users', blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -43,19 +44,32 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.is_superuser
 
     def __str__(self):
-        return self.email
+        return self.username
 
-class Comment(models.Model):
-    user=models.ForeignKey(User, on_delete=models.CASCADE)
-    text=models.CharField( max_length=1000)
-    likes=models.IntegerField(default=0)
-    replies=models.ManyToManyField('self', blank=True)
-    def __str__(self):
-        return f"{self.text}"
-
-class Poste(models.Model):
+def get_current_time():
+    return timezone.now().time()
+class Post(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="post")
     text=models.CharField(max_length=1000)
     likes=models.IntegerField(default=0)
-    comments=models.ManyToManyField(Comment, blank=True)
-    
+    date=models.DateField(default=timezone.now)
+    time=models.TimeField(default=get_current_time)
+    def __str__(self):
+        return f"{self.user}: {self.text}"
+
+class Comment(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
+    text=models.CharField( max_length=1000)
+    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_post', default=1)
+    likes=models.IntegerField(default=0)
+    replies=models.ManyToManyField('self', blank=True)
+    def serialize(self):
+        serialized_replies = [reply.serialize() for reply in self.replies.all()]
+        return {
+            "username": self.user.username,
+            "text": self.text,
+            "likes": self.likes,
+            "replies": serialized_replies
+        }
+    def __str__(self):
+        return f"{self.text}"

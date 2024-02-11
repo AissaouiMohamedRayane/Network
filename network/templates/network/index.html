@@ -1,13 +1,33 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <div class="sub_postes">
-
+    <div id="all_posts">
+        <h1>All Posts</h1>
+        {% if user.is_authenticated %}
+        <div class="border">
+            <h2>New Post</h2>
+            <form action="{% url 'index' %}" method="POST">
+                {% csrf_token %}
+                <textarea name="text" required class="full" ></textarea>
+                <input type="submit" class="btn btn-sm btn-outline-primary" value="Post">
+            </form>
+        </div>
+        {% endif %}
+        {% for Post in Posts %}
+            <div class="border">
+                <h2>{{Post.user}}</h2><br>
+                <p>{{Post.text}}</p>
+                <div class="gray">{{Post.date}}, {{Post.time}}</div>
+                <div class="gray comment" data-id={{Post.id}}>Comment</div>
+                <form id="comment_form" class="display_none">
+                    {% csrf_token %}
+                    <textarea name="" class="full " required placeholder="Add Comment"></textarea>
+                    <input type="submit" class="btn btn-sm btn-outline-primary">
+                </form>
+            </div>
+          {% empty %}
+            <h1>No Post</h1>
+        {% endfor %}
     </div>
-    <div class="all_postes">
 
-    </div>
-    <div class="following">
-
-    </div>
 {% endblock %}
