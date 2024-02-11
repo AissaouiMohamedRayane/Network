@@ -31,22 +31,17 @@ def get_comments(request, id):
         })
 @login_required
 def add_comment(request, id):
-    if request.method != 'POST':
-        return JsonResponse({"error": "POST request required."}, status=400)
+    if request.method !='POST':
+        return JsonResponse({
+            'error':"Only POST request"
+        })
+    data = json.loads(request.body)
+    text = data.get('text')
+    post=Post.objects.get(pk=id)
+    comment=Comment(user=request.user, text=text, post=post)
+    comment.save()
+    return JsonResponse({'message': "Comment added successfully."}, status=200)
 
-    try:
-        post = Post.objects.get(pk=id)
-    except Post.DoesNotExist:
-        return JsonResponse({"error": "Post not found."}, status=404)
-
-    try:
-        data = json.loads(request.body)
-        text = data.get('text')
-        comment = Comment(user=request.user, text=text, post=post)
-        comment.save()
-        return JsonResponse({'message': "Comment added successfully."}, status=200)
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON format in request body."}, status=400)
     
     
     

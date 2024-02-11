@@ -20,8 +20,8 @@
                 <div class="gray">{{Post.date}}, {{Post.time}}</div>
                 <div class="gray comment" data-id={{Post.id}}>Comment</div>
                 <form id="comment_form" class="display_none">
-                    {% csrf_token %}
-                    <textarea name="" class="full " required placeholder="Add Comment"></textarea>
+                    <input type="hidden" id="hidden" value="{{ user.username }}">
+                    <textarea name="" class="full" id="comment_texterea" required placeholder="Add Comment"></textarea>
                     <input type="submit" class="btn btn-sm btn-outline-primary">
                 </form>
             </div>

@@ -17,17 +17,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 h2.innerHTML="Comments:";
                 h2.id="comment_h2"
                 div.appendChild(h2);
-                form.onsubmit=()=>{
-                    return false
-                    fetch(`add_comment/${id}`,{
+                csrfmiddlewaretoken="KM1am1qAL2zqfUIVEog8OFO5ldt0RCTiTWQgE2as90cVOMAVrHjScPKRae1itBtT"
+                form.onsubmit=(event)=>{
+                    event.preventDefault();
+                    fetch(`add_comment/1`,{
                         method:'POST',
-                        body:JSON.stringify()({
-                            text:document.querySelector('#comment_texterea').value,
+                        headers: {
+                            'X-CSRFToken': csrfmiddlewaretoken
+                        },
+                        body:JSON.stringify({
+                            text:dive.querySelector('#comment_texterea').value,
                         })
                     })
                     .then(response=>response.json())
                     .then(data=>{
-                        console.log(data)
+                        if(data.message){
+                            alert(data.message)
+                        }                        
                     })
                 }
                 fetch(`comments/${id}`)
