@@ -5,6 +5,11 @@
     margin: 2%;
     padding: 2%;
     border: 1px solid black;
+    text-align: initial;
+}
+.posts{
+    align-self:flex-start;
+    width: 100%;
 }
 .gray{
     color: gray;
@@ -27,4 +32,28 @@
 }
 .display_none{
     display: none;
+}
+.user_page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.ul_page{
+    display: flex;
+    justify-content: space-between;
+    width: 25%;
+    list-style: none;
+    padding: 0;
+}
+.li_page:hover{
+    cursor: pointer;
+}
+.follow_button{
+    border-radius: 7px;
+    padding: 1% 2%;
+}
+.center{
+    text-align: center;
 }

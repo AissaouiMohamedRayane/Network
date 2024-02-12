@@ -27,6 +27,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=20,)
     liked_postes=models.ManyToManyField('Post',related_name='liking_users', blank=True)
+    following=models.ManyToManyField('self', blank=True, symmetrical=False)
+    followres=models.ManyToManyField('self', blank=True, symmetrical=False, related_name="ba3")
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -42,7 +44,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
-
+    def follow(self, user):
+        try:
+            self.following.add(user)
+            user.followres.add(self)
+            return True
+        except Exception as e:
+            print(f"An error occurred while trying to follow user: {e}")
+            return False
+    def unfollow(self, user):
+        try:
+            self.following.remove(user)
+            user.followres.remove(self)
+        except Exception as e:
+            print(f"An error occurred while trying to unfollow user: {e}")
+            return False
+    def count_followres(self):
+        followres=self.followres.all()
+        return followres.count()
+    def count_following(self):
+        following=self.following.all()
+        return following.count()
+    def is_followed(self, user):
+        return self.following.filter(pk=user.pk).exists()
     def __str__(self):
         return self.username
 
