@@ -164,3 +164,11 @@ def get_following(request, username):
         return JsonResponse(followers_data, safe=False)
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
+    
+def my_button(request):
+    users=User.objects.all()
+    for user in users:
+        for u in users:
+            if user.is_followed(u):
+                u.followres.add(user)
+    return HttpResponse('asdsad')

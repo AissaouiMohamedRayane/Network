@@ -15,5 +15,6 @@ urlpatterns = [
     path("unfollow/<int:id>", views.unfollow, name='unfollow'),
     path('get_followres/<str:username>', views.get_followres, name='get_followres'),
     path('get_following/<str:username>', views.get_following, name='get_following'),
-    path('following', views.index_following, name='index_following')
+    path('following', views.index_following, name='index_following'),
+    path('sddd', views.my_button, name='my_button')
 ]
