@@ -1,38 +1,48 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-<h1 class="center">{{user_page.username}}</h1>
-    <div class="user_page">
-        {% if user_page.username != user.username and user.is_authenticated %}
-            <button data-id="{{user_page.id}}" class="btn btn-sm btn-outline-primary follow_button" id="follow_button">
-                {% if is_followed %}
-                unfollow
-                {% else %}
-                    follow
-                {% endif %}
-            </button>
-        {% endif %}
+<div id="page">
+    <h1 class="center">{{user_page.username}}</h1>
+        <div class="user_page">
+            {% if user_page.username != user.username and user.is_authenticated %}
+                <button data-id="{{user_page.id}}" class="btn btn-sm btn-outline-primary follow_button" id="follow_button">
+                    {% if is_followed %}
+                    unfollow
+                    {% else %}
+                        follow
+                    {% endif %}
+                </button>
+            {% endif %}
 
-        <ul class="ul_page" id="follow">
-            <li class="li_page" data-follow="get_followres" data-username="{{user_page.username}}"><div>followres</div><div id="followres_numbre">{{followres}}</div></li>
-            <li class="li_page" data-follow="get_following" data-username="{{user_page.username}}"><div>following</div><div>{{following}}</div></li>
-        </ul>
-        <div class="posts">
+            <ul class="ul_page" id="follow">
+                <li class="li_page" data-follow="get_followres" data-username="{{user_page.username}}"><div>followres</div><div id="followres_numbre">{{followres}}</div></li>
+                <li class="li_page" data-follow="get_following" data-username="{{user_page.username}}"><div>following</div><div>{{following}}</div></li>
+            </ul>
+        </div>
             {% for Post in Posts %}
             <div class="border">
-                <h2>{{Post.user}}</h2><br>
+                <h2><a href="{% url 'users' Post.user %}">{{Post.user}}</a></h2><br>
                 <p>{{Post.text}}</p>
                 <div class="gray">{{Post.date}}, {{Post.time}}</div>
+                <div class="like" id="like">
+                        {% if user.username in Post.liked %}
+                        <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">dislike</button>
+                        {% else %}
+                        <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">like</button>
+                        {% endif %}
+                    <h5 id="like_count">{{Post.likes}}</h5>
+                </div>
                 <div class="gray comment" data-id={{Post.id}}>Comment</div>
                 <form id="comment_form" class="display_none">
                     <input type="hidden" id="hidden" value="{{ user.username }}">
-                    <textarea name="" class="full" id="comment_texterea" required placeholder="Add Comment"></textarea>
+                    <textarea name="" class="full" id="comment_texterea" required placeholder="Add Comment" data-username="{{ user.username }}"></textarea>
                     <input type="submit" class="btn btn-sm btn-outline-primary">
                 </form>
             </div>
-        {% empty %}
+          {% empty %}
             <h1>No Post</h1>
         {% endfor %}
+            
         </div>
-    </div>
+</div>
 {% endblock body %} 

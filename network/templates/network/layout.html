@@ -30,6 +30,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
                     </li>
+                    <li class="nav-item">
+                        <form id="search_form">
+                            <input type="text" placeholder="User" name="user" id="input_user">
+                            <input type="submit" id="submit_user" disabled >
+                        </form>
+                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Log In</a>

@@ -56,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             self.following.remove(user)
             user.followres.remove(self)
+            return True
         except Exception as e:
             print(f"An error occurred while trying to unfollow user: {e}")
             return False
@@ -67,6 +68,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return following.count()
     def is_followed(self, user):
         return self.following.filter(pk=user.pk).exists()
+    def serialize(self):
+        return{
+            'user':self.username
+        }
     def __str__(self):
         return self.username
 
@@ -75,25 +80,66 @@ def get_current_time():
 class Post(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="post")
     text=models.CharField(max_length=1000)
-    likes=models.IntegerField(default=0)
+    liked_users=models.ManyToManyField(User, blank=True, related_name='users_like_post')
     date=models.DateField(default=timezone.now)
     time=models.TimeField(default=get_current_time)
     def __str__(self):
         return f"{self.user}: {self.text}"
+    def liked_by(self, user):
+        try:
+            self.liked_users.add(user)
+            return True
+        except Exception as e:
+            print(f"An error occurred while trying to like user: {e}")
+            return False
+    def disliked_by(self, user):
+        try:
+            self.liked_users.remove(user)
+            return True
+        except Exception as e:
+            print(f"An error occurred while trying to dislike user: {e}")
+            return False
+    def likes(self):
+        return self.liked_users.count()
+    def liked(self):
+        users=self.liked_users.all()
+        return [user.username for user in users]
+        
+    
+        
 
 class Comment(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
     text=models.CharField( max_length=1000)
     post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_post', default=1)
-    likes=models.IntegerField(default=0)
+    liked_users=models.ManyToManyField(User, blank=True, related_name='users_like_comment')
     replies=models.ManyToManyField('self', blank=True)
+    time=models.TimeField(default=get_current_time)
+    def likes(self):
+        users=self.liked_users.all()
+        return users.count()
     def serialize(self):
         serialized_replies = [reply.serialize() for reply in self.replies.all()]
         return {
+            "id":self.id,
             "username": self.user.username,
             "text": self.text,
-            "likes": self.likes,
+            "likes": self.likes(),
             "replies": serialized_replies
         }
+    def liked_by(self, user):
+        try:
+            self.liked_users.add(user)
+            return True
+        except Exception as e:
+            print('{e}')
+            return False
+    def disliked_by(self, user):
+        try:
+            self.liked_users.remove(user)
+            return True
+        except Exception as e:
+            print('{e}')
+            return False
     def __str__(self):
-        return f"{self.text}"
+        return f"id: {self.id} {self.text}"
