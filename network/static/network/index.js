@@ -1,131 +1,137 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.querySelector("#follow_button");
-  if (button) {
-    button.onclick = follow;
-  }
-  const followed = document.querySelector("#follow");
-  if (followed) {
-    const children = Array.from(followed.children);
-    children.forEach((li) => {
-      li.onclick = show_follow;
-    });
-  }
-  const likes = document.querySelectorAll("#like_button");
-  if (likes) {
-    likes.forEach((likee) => {
-      likee.onclick = like;
-    });
-  }
-  const search_form = document.querySelector("#search_form");
-  if (search_form) {
-    search();
-  }
-  document.querySelectorAll(".comment").forEach((comment) => {
-    comment.onclick = () => {
-      id = parseInt(comment.dataset.id);
-      const dive = comment.parentElement;
-      const existing_div = dive.querySelector("#comment_div");
-      const form = dive.querySelector("#comment_form");
-      if (existing_div) {
-        existing_div.remove();
-        form.classList.add("display_none");
-      } else {
-        form.classList.remove("display_none");
-        const div = document.createElement("div");
-        div.id = "comment_div";
-        const h2 = document.createElement("h2");
-        h2.innerHTML = "Comments:";
-        h2.id = "comment_h2";
-        div.appendChild(h2);
-        form.onsubmit = (event) => {
-          event.preventDefault();
-          const csrftoken = getCookie("csrftoken");
-          const texterea = dive.querySelector("#comment_texterea");
-          const button = document.createElement("button");
-          const span = document.createElement("span");
-          span.className = "flex";
-          const h1 = document.createElement("h1");
-          fetch(`http://127.0.0.1:8000/add_comments/${id}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({
-              text: texterea.value,
-            }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const id = data.id;
-              button.dataset.id = id;
-              h1.innerHTML = "0";
-            });
-          const ul = document.querySelector("#comment_ul");
-          if (!ul) {
-            const ul = document.createElement("ul");
-            ul.id = "comment_ul";
-          }
-          const li = document.createElement("li");
-          li.innerHTML = `${texterea.dataset.username} said:<br>${texterea.value}`;
-          li.className = "overflow";
+  fetch("get_posts")
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
 
-          button.innerHTML = "like";
-          button.classList = "btn btn-sm btn-outline-primary follow_button";
-          ul.appendChild(li);
-          span.appendChild(button);
-          span.appendChild(h1);
-          ul.appendChild(span);
-          div.appendChild(ul);
-          button.onclick = like_comment;
-          texterea.value = "";
-        };
-        fetch(`http://127.0.0.1:8000/comments/${id}`)
-          .then((response) => response.json())
-          .then((comments) => {
-            if (comments.message) {
-              const h1 = document.createElement("h1");
-              h1.innerHTML = `${comments.message}`;
-              div.appendChild(h1);
-            } else {
-              const ul = document.createElement("ul");
-              ul.id = "comment_ul";
-              comments.forEach((comment) => {
-                const id = parseInt(comment.id);
-                const li = document.createElement("li");
-                li.innerHTML = `${comment.username} said:<br>${comment.text}`;
-                li.className = "overflow";
-                ul.appendChild(li);
-                const button = document.createElement("button");
-                const span = document.createElement("span");
-                span.className = "flex";
-                const h1 = document.createElement("h1");
-                h1.innerHTML = comment.likes;
-                button.dataset.id = id;
-                button.classList =
-                  "btn btn-sm btn-outline-primary follow_button";
-                fetch(`http://127.0.0.1:8000/liked_comment/${id}`)
-                  .then((response) => response.json())
-                  .then((bool) => {
-                    console.log(bool);
-                    if (bool.response) {
-                      button.innerHTML = "dislike";
-                    } else {
-                      button.innerHTML = "like";
-                    }
-                  });
-                span.appendChild(button);
-                span.appendChild(h1);
-                ul.appendChild(span);
-                div.appendChild(ul);
-                button.onclick = like_comment;
-              });
-            }
-          });
-        dive.appendChild(div);
+      const button = document.querySelector("#follow_button");
+      if (button) {
+        button.onclick = follow;
       }
-    };
-  });
+      const followed = document.querySelector("#follow");
+      if (followed) {
+        const children = Array.from(followed.children);
+        children.forEach((li) => {
+          li.onclick = show_follow;
+        });
+      }
+      const likes = document.querySelectorAll("#like_button");
+      if (likes) {
+        likes.forEach((likee) => {
+          likee.onclick = like;
+        });
+      }
+      const search_form = document.querySelector("#search_form");
+      if (search_form) {
+        search();
+      }
+      document.querySelectorAll(".comment").forEach((comment) => {
+        comment.onclick = () => {
+          id = parseInt(comment.dataset.id);
+          const dive = comment.parentElement;
+          const existing_div = dive.querySelector("#comment_div");
+          const form = dive.querySelector("#comment_form");
+          if (existing_div) {
+            existing_div.remove();
+            form.classList.add("display_none");
+          } else {
+            form.classList.remove("display_none");
+            const div = document.createElement("div");
+            div.id = "comment_div";
+            const h2 = document.createElement("h2");
+            h2.innerHTML = "Comments:";
+            h2.id = "comment_h2";
+            div.appendChild(h2);
+            form.onsubmit = (event) => {
+              event.preventDefault();
+              const csrftoken = getCookie("csrftoken");
+              const texterea = dive.querySelector("#comment_texterea");
+              const button = document.createElement("button");
+              const span = document.createElement("span");
+              span.className = "flex";
+              const h1 = document.createElement("h1");
+              fetch(`http://127.0.0.1:8000/add_comments/${id}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                  text: texterea.value,
+                }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  const id = data.id;
+                  button.dataset.id = id;
+                  h1.innerHTML = "0";
+                });
+              const ul = document.querySelector("#comment_ul");
+              if (!ul) {
+                const ul = document.createElement("ul");
+                ul.id = "comment_ul";
+              }
+              const li = document.createElement("li");
+              li.innerHTML = `${texterea.dataset.username} said:<br>${texterea.value}`;
+              li.className = "overflow";
+
+              button.innerHTML = "like";
+              button.classList = "btn btn-sm btn-outline-primary follow_button";
+              ul.appendChild(li);
+              span.appendChild(button);
+              span.appendChild(h1);
+              ul.appendChild(span);
+              div.appendChild(ul);
+              button.onclick = like_comment;
+              texterea.value = "";
+            };
+            fetch(`http://127.0.0.1:8000/comments/${id}`)
+              .then((response) => response.json())
+              .then((comments) => {
+                if (comments.message) {
+                  const h1 = document.createElement("h1");
+                  h1.innerHTML = `${comments.message}`;
+                  div.appendChild(h1);
+                } else {
+                  const ul = document.createElement("ul");
+                  ul.id = "comment_ul";
+                  comments.forEach((comment) => {
+                    const id = parseInt(comment.id);
+                    const li = document.createElement("li");
+                    li.innerHTML = `${comment.username} said:<br>${comment.text}`;
+                    li.className = "overflow";
+                    ul.appendChild(li);
+                    const button = document.createElement("button");
+                    const span = document.createElement("span");
+                    span.className = "flex";
+                    const h1 = document.createElement("h1");
+                    h1.innerHTML = comment.likes;
+                    button.dataset.id = id;
+                    button.classList =
+                      "btn btn-sm btn-outline-primary follow_button";
+                    fetch(`http://127.0.0.1:8000/liked_comment/${id}`)
+                      .then((response) => response.json())
+                      .then((bool) => {
+                        console.log(bool);
+                        if (bool.response) {
+                          button.innerHTML = "dislike";
+                        } else {
+                          button.innerHTML = "like";
+                        }
+                      });
+                    span.appendChild(button);
+                    span.appendChild(h1);
+                    ul.appendChild(span);
+                    div.appendChild(ul);
+                    button.onclick = like_comment;
+                  });
+                }
+              });
+            dive.appendChild(div);
+          }
+        };
+      });
+    });
 });
 
 function getCookie(name) {
@@ -294,3 +300,16 @@ function like_comment() {
   }
   span.querySelector("h1").innerHTML = count;
 }
+let last_post_id = null;
+function load_page() {
+  let url = "get_posts";
+  if (last_post_id) {
+    url += `?last_post_id=${last_post_id}`;
+  }
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+}
+

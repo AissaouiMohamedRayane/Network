@@ -19,30 +19,30 @@
         <form class="display_none" action="{% url 'my_button' %}">
             <input type="submit">
         </form>
-        {% for Post in Posts %}
-            <div class="border">
-                <h2><a href="{% url 'users' Post.user %}">{{Post.user}}</a></h2><br>
-                <p>{{Post.text}}</p>
-                <div class="gray">{{Post.date}}, {{Post.time}}</div>
-                <div class="like" id="like">
-                        {% if user.username in Post.liked %}
-                        <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">dislike</button>
-                        {% else %}
-                        <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">like</button>
-                        {% endif %}
-                    <h5 id="like_count">{{Post.likes}}</h5>
-                </div>
-                <div class="gray comment" data-id={{Post.id}}>Comment</div>
-                <form id="comment_form" class="display_none">
-                    <input type="hidden" id="hidden" value="{{ user.username }}">
-                    <textarea name="" class="full" id="comment_texterea" required placeholder="Add Comment" data-username="{{ user.username }}"></textarea>
-                    <input type="submit" class="btn btn-sm btn-outline-primary">
-                </form>
-            </div>
-          {% empty %}
-            <h1>No Post</h1>
-        {% endfor %}
-        </div>
+ {% for Post in Posts %}
+     <div class="border">
+         <h2><a href="{% url 'users' Post.user %}">{{Post.user}}</a></h2><br>
+         <p>{{Post.text}}</p>
+         <div class="gray">{{Post.date}}, {{Post.time}}</div>
+         <div class="like" id="like">
+                 {% if user.username in Post.liked %}
+                 <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">dislike</button>
+                 {% else %}
+                 <button class="btn btn-sm btn-outline-primary" id="like_button" data-id="{{user.id}}" data-post_id="{{Post.id}}">like</button>
+                 {% endif %}
+             <h5 id="like_count">{{Post.likes}}</h5>
+         </div>
+         <div class="gray comment" data-id={{Post.id}}>Comment</div>
+         <form id="comment_form" class="display_none">
+             <input type="hidden" id="hidden" value="{{ user.username }}">
+             <textarea name="" class="full" id="comment_texterea" required placeholder="Add Comment" data-username="{{ user.username }}"></textarea>
+             <input type="submit" class="btn btn-sm btn-outline-primary">
+         </form>
+     </div>
+   {% empty %}
+     <h1>No Post</h1>
+ {% endfor %}
+</div>
     </div>
 </div>
 {% endblock %}

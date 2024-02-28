@@ -84,7 +84,7 @@ class Post(models.Model):
     date=models.DateField(default=timezone.now)
     time=models.TimeField(default=get_current_time)
     def __str__(self):
-        return f"{self.user}: {self.text}"
+        return f"{self.user}: {self.text}    {self.id}"
     def liked_by(self, user):
         try:
             self.liked_users.add(user)
@@ -104,7 +104,19 @@ class Post(models.Model):
     def liked(self):
         users=self.liked_users.all()
         return [user.username for user in users]
-        
+    def get_first_post_id(self):
+        first=self.objects.first()
+        if first:
+            return first.pk
+        return None
+    def serialize(self):
+        return {
+            "id":self.id,
+            "username": self.user.username,
+            "text": self.text,
+            "likes": self.likes(),
+            "date":self.date
+        }
     
         
 

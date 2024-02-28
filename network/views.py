@@ -27,21 +27,6 @@ def index(request, display=None):
         posts=[]
         for user in users:
             posts=posts+list(user.post.all())
-            last_post_id = request.GET.get('last_post_id')
-    
-    posts_queryset = Post.objects.all().order_by('-date')
-    
-    paginator = Paginator(posts_queryset, 10)
-    
-    if last_post_id:
-        try:
-            page_number = paginator.get_page_number(Post.objects.get(id=last_post_id))
-        except Post.DoesNotExist:
-            page_number = 1
-    else:
-        page_number = 1
-    
-    posts_page = paginator.page(page_number)
     return render(request, "network/index.html", {
         "Posts":posts,
         "class":display
